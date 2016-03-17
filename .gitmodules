@@ -1,0 +1,4 @@
+[submodule "libsocket"]
+	path = libsocket
+	url = https://github.com/AbdullinAM/libsocket.git
+

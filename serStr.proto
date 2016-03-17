@@ -1,0 +1,6 @@
+package example;
+
+message SerStr{
+    required int32 k = 1;
+    required string l = 2;
+}
