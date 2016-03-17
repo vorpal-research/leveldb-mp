@@ -4,10 +4,7 @@ include_directories(./ ../)
 include_directories(/usr/include/leveldb)
 include_directories(libsocket/headers)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -lprotobuf")
-
 project(leveldb_daemon)
-
 
 set(SOURCE_FILES
         main.cpp
@@ -19,6 +16,8 @@ set(SOURCE_FILES
         DB.hpp)
 
 add_executable(leveldb_daemon ${SOURCE_FILES})
+set_property(TARGET leveldb_daemon PROPERTY CXX_STANDARD 14)
+set_property(TARGET leveldb_daemon PROPERTY CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(libsocket)
 add_dependencies(leveldb_daemon socket++)
@@ -44,8 +43,11 @@ set(CLIENT_SOURCE_FILES
         ${ProtoSources})
 
 add_executable(client ${CLIENT_SOURCE_FILES})
+set_property(TARGET client PROPERTY CXX_STANDARD 14)
+set_property(TARGET client PROPERTY CXX_STANDARD_REQUIRED ON)
 
 add_dependencies(client socket++)
 
 target_link_libraries(client socket++)
 target_link_libraries(client leveldb)
+target_link_libraries(client protobuf)
