@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "ipc/Client.h"
 #include "ipc/Server.h"
 #include "serializer/Serializer.hpp"
@@ -12,13 +14,20 @@ public:
     using Ptr = std::shared_ptr<DB>;
 
     static DB::Ptr getInstance() {
-        if (not instance) instance.reset( new DB() );
+        if (not instance) instance.reset( new DB{} );
         return instance;
     }
 
     void setPath(const std::string& db_path) {
         db_path_ = db_path;
     }
+
+    template<class T>
+    bool write(const std::string& key, const T& obj) {
+        auto byteStream = serializer::serializer<T>::serialize(obj);
+        ipc::Client client(db_path_);
+        return client.put(key, byteStream.array.get(),byteStream.size);
+    };
 
     template<class ResT, class Context>
     auto read(const std::string& key, Context& ctx) -> decltype(auto) {
@@ -71,8 +80,8 @@ public:
 
 private:
 
-    DB(): instance(nullptr) {}
-    DB(const std::string& db_path): db_path_(db_path), instance(nullptr) {}
+    DB() {}
+    DB(const std::string& db_path): db_path_(db_path) {}
     DB( const DB& ) = delete;
     DB& operator=( DB& ) = delete;
 

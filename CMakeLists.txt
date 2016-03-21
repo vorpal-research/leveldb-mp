@@ -41,8 +41,4 @@ set_property(TARGET leveldb_client PROPERTY CXX_STANDARD 14)
 set_property(TARGET leveldb_client PROPERTY CXX_STANDARD_REQUIRED ON)
 
 add_dependencies(leveldb_client socket++)
-
 target_link_libraries(leveldb_client socket++)
-target_link_libraries(leveldb_client protobuf)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
