@@ -25,6 +25,7 @@ public:
     static const size_t CMD_LENGTH = 3;
 
     Server();
+    Server(const std::string& dbName);
     Server(const std::string& dbName, const std::string& socketName);
     Server(const std::string& dbName, const std::string& socketName, const size_t bufferSize);
     ~Server();

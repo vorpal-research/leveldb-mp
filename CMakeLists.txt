@@ -4,16 +4,17 @@ include_directories(./ ../)
 include_directories(/usr/include/leveldb)
 include_directories(libsocket/headers)
 
+#daemon executable
 project(leveldb_daemon)
 
 set(SOURCE_FILES
-        main.cpp
+        leveldb_daemon.cpp
         storage/Database.cpp
         ipc/Server.cpp
         ipc/Client.cpp
         logging/Logger.h
         serializer/Serializer.hpp
-        DB.hpp)
+        include/DB.hpp)
 
 add_executable(leveldb_daemon ${SOURCE_FILES})
 set_property(TARGET leveldb_daemon PROPERTY CXX_STANDARD 14)
@@ -25,29 +26,23 @@ add_dependencies(leveldb_daemon socket++)
 target_link_libraries(leveldb_daemon socket++)
 target_link_libraries(leveldb_daemon leveldb)
 
-project(client)
 
-find_package(Protobuf)
+#shared library for client
+project(leveldb_client)
 
-file(GLOB ProtoFiles "${CMAKE_CURRENT_SOURCE_DIR}/*.proto")
-PROTOBUF_GENERATE_CPP(ProtoSources ProtoHeaders ${ProtoFiles})
-
-set(CLIENT_SOURCE_FILES
-        client.cpp
-        storage/Database.cpp
-        ipc/Server.cpp
+set(LIB_SOURCE_FILES
         ipc/Client.cpp
         logging/Logger.h
         serializer/Serializer.hpp
-        DB.hpp
-        ${ProtoSources})
+        include/DB.hpp)
 
-add_executable(client ${CLIENT_SOURCE_FILES})
-set_property(TARGET client PROPERTY CXX_STANDARD 14)
-set_property(TARGET client PROPERTY CXX_STANDARD_REQUIRED ON)
+add_library(leveldb_client SHARED ${LIB_SOURCE_FILES})
+set_property(TARGET leveldb_client PROPERTY CXX_STANDARD 14)
+set_property(TARGET leveldb_client PROPERTY CXX_STANDARD_REQUIRED ON)
 
-add_dependencies(client socket++)
+add_dependencies(leveldb_client socket++)
 
-target_link_libraries(client socket++)
-target_link_libraries(client leveldb)
-target_link_libraries(client protobuf)
+target_link_libraries(leveldb_client socket++)
+target_link_libraries(leveldb_client protobuf)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

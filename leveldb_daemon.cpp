@@ -6,15 +6,17 @@
 
 #include "ipc/Server.h"
 
-int workProcess() {
-    leveldb_daemon::ipc::Server server;
+int workProcess(int argc, char** argv) {
+    std::string db_name(argv[0]);
+    std::string socket_name(argv[1]);
+    leveldb_daemon::ipc::Server server(db_name, socket_name);
     server.work();
     server.destroy();
     return 0;
 }
 
 
-int monitorProcess() {
+int monitorProcess(int argc, char** argv) {
     int pid, retval;
     sigset_t sigset;
     siginfo_t siginfo;
@@ -35,7 +37,7 @@ int monitorProcess() {
         if (pid == -1) {
             log.print("[MONITOR] Fork failed \n");
         } else if (not pid) {
-            retval = workProcess();
+            retval = workProcess(argc, argv);
             exit(retval);
         } else {
             sigwaitinfo(&sigset, &siginfo);
@@ -52,7 +54,9 @@ int monitorProcess() {
     return retval;
 }
 
-int main() {
+int main(int argc, char** argv) {
+    if (argc < 2) return -1;
+
     auto pid = fork();
 
     if (pid == -1) {
@@ -67,7 +71,7 @@ int main() {
         close(STDOUT_FILENO);
         close(STDERR_FILENO);
 
-        auto status = monitorProcess();
+        auto status = monitorProcess(argc, argv);
 
         return status;
     } else return 0;
