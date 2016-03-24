@@ -30,7 +30,7 @@ set(LIB_SOURCE_FILES
         ipc/Client.cpp
         logging/Logger.h
         serializer/Serializer.hpp
-        include/DB.hpp)
+        include/DB.cpp)
 
 add_library(leveldb_client STATIC ${LIB_SOURCE_FILES})
 set_property(TARGET leveldb_client PROPERTY CXX_STANDARD 14)

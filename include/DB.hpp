@@ -12,10 +12,18 @@ class DB {
 public:
 
     using Ptr = std::shared_ptr<DB>;
+    static const std::string DAEMON_FILE_PATH;
 
     static DB::Ptr getInstance() {
         static DB::Ptr instance_ = DB::Ptr(new DB{});
         return instance_;
+    }
+
+    static bool isDaemonStarted() {
+        std::ifstream file(DAEMON_FILE_PATH);
+        auto&& exists = file.good();
+        file.close();
+        return exists;
     }
 
     void setSocket(const std::string& socket_name) {
