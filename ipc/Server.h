@@ -5,10 +5,10 @@
 #ifndef LEVELDB_API_SERVER_H
 #define LEVELDB_API_SERVER_H
 
-#include <libsocket/headers/unixserverstream.hpp>
+#include <unixserverstream.hpp>
 
-#include "storage/Database.h"
-#include "logging/Logger.h"
+#include "../storage/Database.h"
+#include "../logging/Logger.h"
 
 namespace leveldb_daemon {
 namespace ipc {
