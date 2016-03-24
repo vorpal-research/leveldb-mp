@@ -32,7 +32,7 @@ set(LIB_SOURCE_FILES
         serializer/Serializer.hpp
         include/DB.hpp)
 
-add_library(leveldb_client SHARED ${LIB_SOURCE_FILES})
+add_library(leveldb_client STATIC ${LIB_SOURCE_FILES})
 set_property(TARGET leveldb_client PROPERTY CXX_STANDARD 14)
 set_property(TARGET leveldb_client PROPERTY CXX_STANDARD_REQUIRED ON)
 
