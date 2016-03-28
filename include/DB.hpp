@@ -1,3 +1,6 @@
+#ifndef LEVELDB_API_DB_HPP
+#define LEVELDB_API_DB_HPP
+
 #include <memory>
 
 #include "../ipc/Client.h"
@@ -98,3 +101,5 @@ private:
 };
 
 }   /* namespace leveldb_daemon */
+
+#endif
