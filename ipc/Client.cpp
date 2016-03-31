@@ -30,6 +30,9 @@ std::pair<char*, size_t> Client::get(const std::string& key) {
         auto size = hexStringToInt(dataSize);
         if (size < 0) {
             log_.print("Error: received data with negative length");
+        } else if (size == 0) {
+            log_.print("Empty input");
+            return {nullptr, 0};
         }
         auto data = new char[size];
         memset(data, 0, size);

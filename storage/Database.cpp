@@ -41,7 +41,7 @@ Database::Value Database::get(const Key &key) {
     if (it->Valid())
         return it->value();
     else
-        return Value();
+        return Value("", 0);
 }
 
 Database::Iterator Database::get(const Key& from, const Key& to) {
