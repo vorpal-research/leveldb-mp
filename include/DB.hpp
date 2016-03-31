@@ -66,7 +66,8 @@ public:
     auto readAll(const std::string& key, Context& ctx) -> decltype(auto) {
         ipc::Client client(socket_name_);
         auto&& serializedData = client.getAll(key);
-        std::vector<ResT> result;
+        std::vector<decltype(serializer::deserializer<ResT, serializer::Buffer, Context>::deserialize(
+                serializer::Buffer{std::shared_ptr<char>(serializedData[0].first), serializedData[0].second}, ctx))> result;
         for (auto&& it: serializedData) {
             std::shared_ptr<char> ptr(it.first);
             serializer::Buffer value{ptr, it.second};
@@ -80,7 +81,8 @@ public:
     auto readAll(const std::string& key) -> decltype(auto) {
         ipc::Client client(socket_name_);
         auto&& serializedData = client.getAll(key);
-        std::vector<ResT> result;
+        std::vector<decltype(serializer::deserializer<ResT, serializer::Buffer>::deserialize(
+                serializer::Buffer{std::shared_ptr<char>(serializedData[0].first), serializedData[0].second}))> result;
         for (auto&& it: serializedData) {
             std::shared_ptr<char> ptr(it.first);
             serializer::Buffer value{ptr, it.second};
