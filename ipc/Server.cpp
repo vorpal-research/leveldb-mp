@@ -47,13 +47,13 @@ int Server::work() {
 
         try {
             libsocket::unix_stream_client* client;
+            log_.print("waiting for client");
             client = server_.accept();
 
             while (true) {
                 std::string cmd;
                 cmd.resize(CMD_LENGTH);
                 *client >> cmd;
-
                 if (cmd == endCmd()) {
                     client->shutdown();
                     delete client;
@@ -97,11 +97,21 @@ int Server::work() {
                     }
                     auto&& size = intToHexString(CMD_LENGTH);
                     *client << size << endCmd();
+
                 } else if (cmd == getOneCmd()) {
                     auto&& val = db_.get(key);
                     auto&& size = intToHexString(val.size());
                     client->snd(size.c_str(), size.length());
-                    client->snd(val.data(), val.size());
+                    if (val.size() > 0) {
+                        client->snd(val.data(), val.size());
+                    }
+
+                } else {
+                    log_.print("Unknown command from client: " + cmd);
+                    log_.print("Disconnecting current client");
+                    client->shutdown();
+                    delete client;
+                    break;
                 }
             }
         } catch (const libsocket::socket_exception& ex) {

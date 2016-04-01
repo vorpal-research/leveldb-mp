@@ -22,7 +22,6 @@ std::pair<char*, size_t> Client::get(const std::string& key) {
 
         auto keySize = intToHexString(key.length());
         client_ << keySize << key;
-
         std::string dataSize;
         dataSize.resize(WIDTH);
         client_ >> dataSize;
@@ -57,7 +56,6 @@ Client::DataArray Client::getAll(const std::string &key) {
             std::string dataSize;
             dataSize.resize(WIDTH);
             client_ >> dataSize;
-
             auto size = hexStringToInt(dataSize);
             if (size < 0) {
                 log_.print("Error: received data with negative length");
