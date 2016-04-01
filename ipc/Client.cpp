@@ -10,10 +10,12 @@
 namespace leveldb_daemon {
 namespace ipc {
 
-Client::Client(const std::string &server) : client_(server), log_(LOG_FILE) { }
+Client::Client(const std::string &server) : client_(server), log_(LOG_FILE), opened_(true) { }
 
 Client::~Client() {
-    close();
+    if (opened_) {
+        close();
+    }
 }
 
 std::pair<char*, size_t> Client::get(const std::string& key) {
@@ -22,6 +24,7 @@ std::pair<char*, size_t> Client::get(const std::string& key) {
 
         auto keySize = intToHexString(key.length());
         client_ << keySize << key;
+
         std::string dataSize;
         dataSize.resize(WIDTH);
         client_ >> dataSize;
@@ -33,6 +36,7 @@ std::pair<char*, size_t> Client::get(const std::string& key) {
             log_.print("Empty input");
             return {nullptr, 0};
         }
+
         auto data = new char[size];
         memset(data, 0, size);
         client_.rcv(data, size);
@@ -101,9 +105,12 @@ bool Client::put(const std::string& key, char* data, size_t size) {
 }
 
 void Client::close() {
-    client_ << endCmd();
-    client_.shutdown();
-    client_.destroy();
+    if (opened_) {
+        client_ << endCmd();
+        client_.shutdown();
+        client_.destroy();
+        opened_ = false;
+    }
 }
 
 std::string Client::intToHexString(const int num, size_t width) {

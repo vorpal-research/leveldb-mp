@@ -47,13 +47,13 @@ int Server::work() {
 
         try {
             libsocket::unix_stream_client* client;
-            log_.print("waiting for client");
             client = server_.accept();
 
             while (true) {
                 std::string cmd;
                 cmd.resize(CMD_LENGTH);
                 *client >> cmd;
+
                 if (cmd == endCmd()) {
                     client->shutdown();
                     delete client;

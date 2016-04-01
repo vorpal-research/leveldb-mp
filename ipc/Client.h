@@ -48,6 +48,7 @@ private:
 
     libsocket::unix_stream_client client_;
     logging::Logger log_;
+    bool opened_;
 
 };
 

@@ -44,6 +44,7 @@ public:
     auto read(const std::string& key, Context& ctx) -> decltype(auto) {
         ipc::Client client(socket_name_);
         auto&& serializedData = client.get(key);
+        client.close();
         if (not serializedData.first)
             return serializer::deserializer<ResT, serializer::Buffer, Context>::notFound();
         std::shared_ptr<char> ptr(serializedData.first);
@@ -55,6 +56,7 @@ public:
     auto read(const std::string& key) -> decltype(auto) {
         ipc::Client client(socket_name_);
         auto&& serializedData = client.get(key);
+        client.close();
         if (not serializedData.first)
             return serializer::deserializer<ResT, serializer::Buffer>::notFound();
         std::shared_ptr<char> ptr(serializedData.first);
@@ -66,6 +68,7 @@ public:
     auto readAll(const std::string& key, Context& ctx) -> decltype(auto) {
         ipc::Client client(socket_name_);
         auto&& serializedData = client.getAll(key);
+        client.close();
         std::vector<decltype(serializer::deserializer<ResT, serializer::Buffer, Context>::deserialize(
                 serializer::Buffer{std::shared_ptr<char>(serializedData[0].first), serializedData[0].second}, ctx))> result;
         for (auto&& it: serializedData) {
@@ -81,6 +84,7 @@ public:
     auto readAll(const std::string& key) -> decltype(auto) {
         ipc::Client client(socket_name_);
         auto&& serializedData = client.getAll(key);
+        client.close();
         std::vector<decltype(serializer::deserializer<ResT, serializer::Buffer>::deserialize(
                 serializer::Buffer{std::shared_ptr<char>(serializedData[0].first), serializedData[0].second}))> result;
         for (auto&& it: serializedData) {
