@@ -25,12 +25,11 @@ std::pair<char*, size_t> Client::get(const std::string& key) {
 
         auto keySize = intToHexString(key.length());
         client_ << keySize << key;
-        log_.print("Sending key with size " + keySize + " and value key " + key);
+        log_.print("Sending key: " + key);
 
         std::string dataSize;
         dataSize.resize(WIDTH);
         client_ >> dataSize;
-        log_.print("Received data size: " + dataSize);
 
         auto size = hexStringToInt(dataSize);
         if (size < 0) {
@@ -42,7 +41,7 @@ std::pair<char*, size_t> Client::get(const std::string& key) {
 
         auto data = new char[size];
         memset(data, 0, size);
-        client_.rcv(data, size);
+        receiveData(data, size);
 
         return {data, size};
     } catch (const libsocket::socket_exception& exc) {
@@ -59,22 +58,27 @@ Client::DataArray Client::getAll(const std::string &key) {
 
         auto keySize = intToHexString(key.length());
         client_ << keySize << key;
-        log_.print("Sending key with size " + keySize + " and value key " + key);
+        log_.print("Sending key: " + key);
 
         while(true) {
             std::string dataSize;
             dataSize.resize(WIDTH);
             client_ >> dataSize;
-            log_.print("Received data size: " + dataSize);
             auto size = hexStringToInt(dataSize);
             if (size < 0) {
                 log_.print("Error: received data with negative length");
+            } else if (size == 0) {
+                log_.print("Empty input");
+                continue;
             }
+
             auto data = new char[size];
             memset(data, 0, size);
-            client_.rcv(data, size);
+
+            receiveData(data, size);
 
             if (size == CMD_LENGTH && std::string(data, CMD_LENGTH) == endCmd()) {
+                log_.print("Received: " + endCmd());
                 delete []data;
                 break;
             }
@@ -97,7 +101,7 @@ bool Client::put(const std::string& key, char* data, size_t size) {
 
         auto keySize = intToHexString(key.length());
         client_ << keySize << key;
-        log_.print("Sending key with size " + keySize + " and value key " + key);
+        log_.print("Sending key: " + key);
 
         auto dataSize = intToHexString(size);
         client_ << dataSize;
@@ -118,8 +122,27 @@ void Client::close() {
         client_ << endCmd();
         client_.shutdown();
         client_.destroy();
+
+        log_.print("Client destroyed");
+
         opened_ = false;
     }
+}
+
+bool Client::receiveData(char *buffer, size_t size) {
+    auto totalRecvd = 0;
+    log_.print("Receiving data with size:");
+    log_.print(size);
+    while (totalRecvd < size) {
+        auto recvd = client_.rcv(buffer + totalRecvd, size - totalRecvd);
+        if (recvd < 0) {
+            log_.print("Error while receiving");
+            return false;
+        }
+        totalRecvd += recvd;
+    }
+    log_.print("Receiving end");
+    return true;
 }
 
 std::string Client::intToHexString(const int num, size_t width) {
