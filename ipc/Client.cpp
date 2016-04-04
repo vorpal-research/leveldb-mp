@@ -21,13 +21,16 @@ Client::~Client() {
 std::pair<char*, size_t> Client::get(const std::string& key) {
     try {
         client_ << getOneCmd();
+        log_.print("Sending: " + getOneCmd());
 
         auto keySize = intToHexString(key.length());
         client_ << keySize << key;
+        log_.print("Sending key with size " + keySize + " and value key " + key);
 
         std::string dataSize;
         dataSize.resize(WIDTH);
         client_ >> dataSize;
+        log_.print("Received data size: " + dataSize);
 
         auto size = hexStringToInt(dataSize);
         if (size < 0) {
@@ -52,14 +55,17 @@ Client::DataArray Client::getAll(const std::string &key) {
 
     try {
         client_ << getAllCmd();
+        log_.print("Sending: " + getAllCmd());
 
         auto keySize = intToHexString(key.length());
         client_ << keySize << key;
+        log_.print("Sending key with size " + keySize + " and value key " + key);
 
         while(true) {
             std::string dataSize;
             dataSize.resize(WIDTH);
             client_ >> dataSize;
+            log_.print("Received data size: " + dataSize);
             auto size = hexStringToInt(dataSize);
             if (size < 0) {
                 log_.print("Error: received data with negative length");
@@ -87,12 +93,15 @@ bool Client::put(const std::string& key, char* data, size_t size) {
 
     try {
         client_ << putCmd();
+        log_.print("Sending: " + putCmd());
 
         auto keySize = intToHexString(key.length());
         client_ << keySize << key;
+        log_.print("Sending key with size " + keySize + " and value key " + key);
 
         auto dataSize = intToHexString(size);
         client_ << dataSize;
+        log_.print("Sending data size: " + dataSize);
         client_.snd(data, size);
 
         result.resize(3);

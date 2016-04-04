@@ -53,6 +53,7 @@ int Server::work() {
                 std::string cmd;
                 cmd.resize(CMD_LENGTH);
                 *client >> cmd;
+                log_.print("Received cmd: " + cmd);
 
                 if (cmd == endCmd()) {
                     client->shutdown();
@@ -64,15 +65,18 @@ int Server::work() {
                 keySizeStr.resize(WIDTH);
                 *client >> keySizeStr;
                 auto keySize = hexStringToInt(keySizeStr);
+                log_.print("Received key size: " + keySizeStr);
                 if (keySize > buf_size_) resizeBuffer(keySize);
                 std::string key;
                 key.resize(keySize);
                 *client >> key;
+                log_.print("Received key: " + key);
 
                 if (cmd == putCmd()) {
                     std::string dataSizeStr;
                     dataSizeStr.resize(WIDTH);
                     *client >> dataSizeStr;
+                    log_.print("Received data size: " + dataSizeStr);
                     auto dataSize = hexStringToInt(dataSizeStr);
                     if (dataSize > buf_size_) resizeBuffer(dataSize);
                     auto recvSize = client->rcv(buffer_, dataSize);
@@ -82,8 +86,10 @@ int Server::work() {
                     if (not db_.put(key, data)) {
                         log_.print("Error while putting data into db with key: " + key);
                         client->snd(failCmd().c_str(), CMD_LENGTH);
+                        log_.print("Sending: " + failCmd());
                     } else {
                         client->snd(successCmd().c_str(), CMD_LENGTH);
+                        log_.print("Sending: " + successCmd());
                     }
                     memset(buffer_, 0, dataSize);
 
@@ -92,16 +98,19 @@ int Server::work() {
                     while (it.valid()) {
                         auto&& size = intToHexString(it.value().size());
                         client->snd(size.c_str(), size.length());
+                        log_.print("Sending data with size: " + size);
                         client->snd(it.value().data(), it.value().size());
                         it.next();
                     }
                     auto&& size = intToHexString(CMD_LENGTH);
                     *client << size << endCmd();
+                    log_.print("Sending: " + size);
 
                 } else if (cmd == getOneCmd()) {
                     auto&& val = db_.get(key);
                     auto&& size = intToHexString(val.size());
                     client->snd(size.c_str(), size.length());
+                    log_.print("Sending data with size: " + size);
                     if (val.size() > 0) {
                         client->snd(val.data(), val.size());
                     }
