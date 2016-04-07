@@ -10,12 +10,16 @@
 namespace leveldb_daemon {
 namespace ipc {
 
+Client::Client() : log_(LOG_FILE), opened_(false) { }
 Client::Client(const std::string &server) : client_(server), log_(LOG_FILE), opened_(true) { }
 
 Client::~Client() {
-    if (opened_) {
-        close();
-    }
+    close();
+}
+
+void Client::connect(const std::string& server) {
+    client_.connect(server);
+    opened_ = true;
 }
 
 std::pair<char*, size_t> Client::get(const std::string& key) {

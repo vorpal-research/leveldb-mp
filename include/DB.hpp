@@ -33,18 +33,33 @@ public:
         socket_name_ = socket_name;
     }
 
+    void lock() {
+        locked_ = true;
+        client_.connect(socket_name_);
+    }
+
+    void unlock() {
+        client_.close();
+        locked_ = false;
+    }
+
     template<class T>
     bool write(const std::string& key, const T& obj) {
         auto byteStream = serializer::serializer<T>::serialize(obj);
-        ipc::Client client(socket_name_);
-        return client.put(key, byteStream.array.get(),byteStream.size);
+        if (locked_) return client_.put(key, byteStream.array.get(), byteStream.size);
+        else {
+            client_.connect(socket_name_);
+            auto&& result = client_.put(key, byteStream.array.get(), byteStream.size);
+            client_.close();
+            return result;
+        }
     };
 
     template<class ResT, class Context>
     auto read(const std::string& key, Context& ctx) -> decltype(auto) {
-        ipc::Client client(socket_name_);
-        auto&& serializedData = client.get(key);
-        client.close();
+        if (not locked_) client_.connect(socket_name_);
+        auto&& serializedData = client_.get(key);
+        if (not locked_) client_.close();
         if (not serializedData.first)
             return serializer::deserializer<ResT, serializer::Buffer, Context>::notFound();
         std::shared_ptr<char> ptr(serializedData.first);
@@ -54,9 +69,9 @@ public:
 
     template<class ResT>
     auto read(const std::string& key) -> decltype(auto) {
-        ipc::Client client(socket_name_);
-        auto&& serializedData = client.get(key);
-        client.close();
+        if (not locked_) client_.connect(socket_name_);
+        auto&& serializedData = client_.get(key);
+        if (not locked_) client_.close();
         if (not serializedData.first)
             return serializer::deserializer<ResT, serializer::Buffer>::notFound();
         std::shared_ptr<char> ptr(serializedData.first);
@@ -66,9 +81,9 @@ public:
 
     template<class ResT, class Context>
     auto readAll(const std::string& key, Context& ctx) -> decltype(auto) {
-        ipc::Client client(socket_name_);
-        auto&& serializedData = client.getAll(key);
-        client.close();
+        if (not locked_) client_.connect(socket_name_);
+        auto&& serializedData = client_.getAll(key);
+        if (not locked_) client_.close();
         std::vector<decltype(serializer::deserializer<ResT, serializer::Buffer, Context>::deserialize(
                 serializer::Buffer{std::shared_ptr<char>(serializedData[0].first), serializedData[0].second}, ctx))> result;
         for (auto&& it: serializedData) {
@@ -82,9 +97,9 @@ public:
 
     template<class ResT>
     auto readAll(const std::string& key) -> decltype(auto) {
-        ipc::Client client(socket_name_);
-        auto&& serializedData = client.getAll(key);
-        client.close();
+        if (not locked_) client_.connect(socket_name_);
+        auto&& serializedData = client_.getAll(key);
+        if (not locked_) client_.close();
         std::vector<decltype(serializer::deserializer<ResT, serializer::Buffer>::deserialize(
                 serializer::Buffer{std::shared_ptr<char>(serializedData[0].first), serializedData[0].second}))> result;
         for (auto&& it: serializedData) {
@@ -98,11 +113,13 @@ public:
 private:
 
     DB() {}
-    DB(const std::string& db_path): socket_name_(db_path) {}
+    DB(const std::string& db_path): socket_name_(db_path), locked_(false) {}
     DB( const DB& ) = delete;
     DB& operator=( DB& ) = delete;
 
     std::string socket_name_;
+    ipc::Client client_;
+    bool locked_;
 
 };
 

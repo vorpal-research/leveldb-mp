@@ -24,9 +24,11 @@ public:
     static const size_t CMD_LENGTH = 3;
     const std::string LOG_FILE = "/tmp/leveldb-api-client.log";
 
+    Client();
     Client(const std::string& server);
     ~Client();
 
+    void connect(const std::string& server);
     std::pair<char*, size_t> get(const std::string& key);
     DataArray getAll(const std::string& key);
     bool put(const std::string& key, char* data, size_t size);
