@@ -119,6 +119,8 @@ int Server::work() {
                     client->snd(size.c_str(), size.length());
                     if (val.size() > 0) {
                         client->snd(val.data(), val.size());
+                    } else {
+                        log_.print("Data not found");
                     }
 
                 } else {

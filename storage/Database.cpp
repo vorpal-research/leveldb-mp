@@ -38,7 +38,8 @@ Database::Value Database::get(const Key &key) {
     auto&& it = db_->NewIterator(ReadOptions());
 
     it->Seek(Slice(key));
-    if (it->Valid())
+
+    if (it->Valid() && it->key().ToString() == key)
         return it->value();
     else
         return Value("", 0);
