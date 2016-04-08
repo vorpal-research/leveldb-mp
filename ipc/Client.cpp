@@ -110,7 +110,7 @@ bool Client::put(const std::string& key, char* data, size_t size) {
         auto dataSize = intToHexString(size);
         client_ << dataSize;
         log_.print("Sending data size: " + dataSize);
-        client_.snd(data, size);
+        if (size > 0) client_.snd(data, size);
 
         result.resize(3);
         client_ >> result;
