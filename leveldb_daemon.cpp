@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "ipc/Server.h"
+#include "util/Util.h"
 
 const std::string DAEMON_FILE_PATH = "/tmp/leveldb_daemon_started";
 
@@ -37,13 +38,17 @@ int monitorProcess(const std::string& db_name, const std::string& socket_name) {
         if (pid == -1) {
             log.print("[MONITOR] Fork failed \n");
         } else if (not pid) {
-            retval = workProcess(db_name, socket_name);
+            if (not leveldb_daemon::util::isFileExists(DAEMON_FILE_PATH)) {
+                retval = workProcess(db_name, socket_name);
 
-            if (std::remove(DAEMON_FILE_PATH.c_str()) != 0) {
-                log.print("error while deleting daemon file");
+                if (std::remove(DAEMON_FILE_PATH.c_str()) != 0) {
+                    log.print("error while deleting daemon file");
+                }
+
+                exit(retval);
+            } else {
+                exit(0);
             }
-
-            exit(retval);
         } else {
             sigwaitinfo(&sigset, &siginfo);
 

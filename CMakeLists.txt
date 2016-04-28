@@ -13,7 +13,7 @@ set(DAEMON_SOURCE_FILES
         ipc/Server.cpp
         logging/Logger.h
         storage/Database.cpp
-        util/Util.h)
+        util/Util.cpp)
 
 add_executable(leveldb_daemon ${DAEMON_SOURCE_FILES})
 set_property(TARGET leveldb_daemon PROPERTY CXX_STANDARD 14)
@@ -32,7 +32,7 @@ set(LIB_SOURCE_FILES
         include/DB.cpp
         logging/Logger.h
         serializer/Serializer.hpp
-        util/Util.h)
+        util/Util.cpp)
 
 add_library(leveldb_client STATIC ${LIB_SOURCE_FILES})
 set_property(TARGET leveldb_client PROPERTY CXX_STANDARD 14)

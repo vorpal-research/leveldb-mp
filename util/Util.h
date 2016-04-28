@@ -2,49 +2,23 @@
 // Created by abdullin on 4/28/16.
 //
 
-#ifndef LEVELDB_CLIENT_UTIL_H
-#define LEVELDB_CLIENT_UTIL_H
+#ifndef LEVELDB_MP_UTIL_H
+#define LEVELDB_MP_UTIL_H
 
 #include <fstream>
 #include <sstream>
 
-#include "logging/Logger.h"
+#include "../logging/Logger.h"
 
 namespace leveldb_daemon {
 namespace util {
 
-bool isFileExists(const std::string& path) {
-    std::ifstream file(path);
-    auto&& exists = file.good();
-    file.close();
-    return exists;
-}
+bool isFileExists(const std::string& path);
 
-std::string intToHexString(const int num, const size_t width) {
-    logging::Logger log;
-    std::string res;
-    std::stringstream stream;
-    stream << std::hex << num;
-    stream >> res;
-    if (res.length() < width) {
-        std::string nulls(width - res.length(), '0');
-        res.insert(0, nulls);
-    } else if (res.length() > width) {
-        log.print("Error: size of data is too big");
-        res = std::string(width, '0');
-    }
-    return res;
-}
-
-int hexStringToInt(const std::string& str) {
-    std::stringstream stream;
-    stream << str;
-    int num;
-    stream >> std::hex >> num;
-    return num;
-}
+std::string intToHexString(const int num, const size_t width);
+int hexStringToInt(const std::string& str);
 
 }   /* namespace utl */
 }   /* namespace leveldb_daemon */
 
-#endif //LEVELDB_CLIENT_UTIL_H
+#endif //LEVELDB_MP_UTIL_H

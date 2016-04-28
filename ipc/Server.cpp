@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #include "Server.h"
-#include "util/Util.h"
+#include "../util/Util.h"
 
 namespace leveldb_daemon {
 namespace ipc {
