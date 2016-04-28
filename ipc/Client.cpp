@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "Client.h"
+#include "util/Util.h"
 
 namespace leveldb_daemon {
 namespace ipc {
@@ -27,7 +28,7 @@ std::pair<char*, size_t> Client::get(const std::string& key) {
         client_ << getOneCmd();
         log_.print("Sending: " + getOneCmd());
 
-        auto keySize = intToHexString(key.length());
+        auto keySize = util::intToHexString(key.length(), WIDTH);
         client_ << keySize << key;
         log_.print("Sending key: " + key);
 
@@ -35,7 +36,7 @@ std::pair<char*, size_t> Client::get(const std::string& key) {
         dataSize.resize(WIDTH);
         client_ >> dataSize;
 
-        auto size = hexStringToInt(dataSize);
+        auto size = util::hexStringToInt(dataSize);
         if (size < 0) {
             log_.print("Error: received data with negative length");
         } else if (size == 0) {
@@ -60,7 +61,7 @@ Client::DataArray Client::getAll(const std::string &key) {
         client_ << getAllCmd();
         log_.print("Sending: " + getAllCmd());
 
-        auto keySize = intToHexString(key.length());
+        auto keySize = util::intToHexString(key.length(), WIDTH);
         client_ << keySize << key;
         log_.print("Sending key: " + key);
 
@@ -68,7 +69,7 @@ Client::DataArray Client::getAll(const std::string &key) {
             std::string dataSize;
             dataSize.resize(WIDTH);
             client_ >> dataSize;
-            auto size = hexStringToInt(dataSize);
+            auto size = util::hexStringToInt(dataSize);
             if (size < 0) {
                 log_.print("Error: received data with negative length");
             } else if (size == 0) {
@@ -103,11 +104,11 @@ bool Client::put(const std::string& key, char* data, size_t size) {
         client_ << putCmd();
         log_.print("Sending: " + putCmd());
 
-        auto keySize = intToHexString(key.length());
+        auto keySize = util::intToHexString(key.length(), WIDTH);
         client_ << keySize << key;
         log_.print("Sending key: " + key);
 
-        auto dataSize = intToHexString(size);
+        auto dataSize = util::intToHexString(size, WIDTH);
         client_ << dataSize;
         log_.print("Sending data size: " + dataSize);
         if (size > 0) client_.snd(data, size);
@@ -147,29 +148,6 @@ bool Client::receiveData(char *buffer, size_t size) {
     }
     log_.print("Receiving end");
     return true;
-}
-
-std::string Client::intToHexString(const int num, size_t width) {
-    std::string res;
-    std::stringstream stream;
-    stream << std::hex << num;
-    stream >> res;
-    if (res.length() < width) {
-        std::string nulls(width - res.length(), '0');
-        res.insert(0, nulls);
-    } else if (res.length() > width) {
-        log_.print("Error: size of data is too big");
-        res = std::string(width, '0');
-    }
-    return res;
-}
-
-int Client::hexStringToInt(const std::string& str) {
-    std::stringstream stream;
-    stream << str;
-    int num;
-    stream >> std::hex >> num;
-    return num;
 }
 
 }   /* namespace ipc */

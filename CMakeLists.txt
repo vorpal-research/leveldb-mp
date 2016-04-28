@@ -10,9 +10,10 @@ project(leveldb_daemon)
 
 set(DAEMON_SOURCE_FILES
         leveldb_daemon.cpp
-        storage/Database.cpp
         ipc/Server.cpp
-        logging/Logger.h)
+        logging/Logger.h
+        storage/Database.cpp
+        util/Util.h)
 
 add_executable(leveldb_daemon ${DAEMON_SOURCE_FILES})
 set_property(TARGET leveldb_daemon PROPERTY CXX_STANDARD 14)
@@ -28,9 +29,10 @@ project(leveldb_client)
 
 set(LIB_SOURCE_FILES
         ipc/Client.cpp
+        include/DB.cpp
         logging/Logger.h
         serializer/Serializer.hpp
-        include/DB.cpp)
+        util/Util.h)
 
 add_library(leveldb_client STATIC ${LIB_SOURCE_FILES})
 set_property(TARGET leveldb_client PROPERTY CXX_STANDARD 14)

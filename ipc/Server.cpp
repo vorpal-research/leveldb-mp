@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include "Server.h"
+#include "util/Util.h"
 
 namespace leveldb_daemon {
 namespace ipc {
@@ -64,7 +65,7 @@ int Server::work() {
                 std::string keySizeStr;
                 keySizeStr.resize(WIDTH);
                 *client >> keySizeStr;
-                auto keySize = hexStringToInt(keySizeStr);
+                auto keySize = util::hexStringToInt(keySizeStr);
                 if (keySize > buf_size_) resizeBuffer(keySize);
                 std::string key;
                 key.resize(keySize);
@@ -75,7 +76,7 @@ int Server::work() {
                     std::string dataSizeStr;
                     dataSizeStr.resize(WIDTH);
                     *client >> dataSizeStr;
-                    auto dataSize = hexStringToInt(dataSizeStr);
+                    auto dataSize = util::hexStringToInt(dataSizeStr);
                     if (dataSize > buf_size_) resizeBuffer(dataSize);
 
                     auto totalRecvd = 0;
@@ -105,17 +106,17 @@ int Server::work() {
                 } else if (cmd == getAllCmd()) {
                     auto&& it = db_.get(key, key);
                     while (it.valid()) {
-                        auto&& size = intToHexString(it.value().size());
+                        auto&& size = util::intToHexString(it.value().size(), WIDTH);
                         client->snd(size.c_str(), size.length());
                         client->snd(it.value().data(), it.value().size());
                         it.next();
                     }
-                    auto&& size = intToHexString(CMD_LENGTH);
+                    auto&& size = util::intToHexString(CMD_LENGTH, WIDTH);
                     *client << size << endCmd();
 
                 } else if (cmd == getOneCmd()) {
                     auto&& val = db_.get(key);
-                    auto&& size = intToHexString(val.size());
+                    auto&& size = util::intToHexString(val.size(), WIDTH);
                     client->snd(size.c_str(), size.length());
                     if (val.size() > 0) {
                         client->snd(val.data(), val.size());
@@ -135,29 +136,6 @@ int Server::work() {
             log_.print(ex.mesg);
         }
     }
-}
-
-std::string Server::intToHexString(const int num, const size_t width) {
-    std::string res;
-    std::stringstream stream;
-    stream << std::hex << num;
-    stream >> res;
-    if (res.length() < width) {
-        std::string nulls(width - res.length(), '0');
-        res.insert(0, nulls);
-    } else if (res.length() > width) {
-        log_.print("Error: size of data is too big");
-        res = std::string(width, '0');
-    }
-    return res;
-}
-
-int Server::hexStringToInt(const std::string& str) {
-    std::stringstream stream;
-    stream << str;
-    int num;
-    stream >> std::hex >> num;
-    return num;
 }
 
 void Server::resizeBuffer(size_t size) {

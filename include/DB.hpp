@@ -6,6 +6,7 @@
 #include "../ipc/Client.h"
 #include "../ipc/Server.h"
 #include "../serializer/Serializer.hpp"
+#include "../util/Util.h"
 
 
 namespace leveldb_daemon {
@@ -23,10 +24,7 @@ public:
     }
 
     static bool isDaemonStarted() {
-        std::ifstream file(DAEMON_FILE_PATH);
-        auto&& exists = file.good();
-        file.close();
-        return exists;
+        return util::isFileExists(DAEMON_FILE_PATH);
     }
 
     void setSocket(const std::string& socket_name) {

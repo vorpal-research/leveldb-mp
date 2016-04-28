@@ -43,8 +43,6 @@ private:
     std::string successCmd() const  { return "ok_"; }
     std::string failCmd() const     { return "nok"; }
 
-    std::string intToHexString(const int num, const size_t width = WIDTH);
-    int hexStringToInt(const std::string& str);
     bool receiveData(char *buffer, size_t size);
 
 private:
