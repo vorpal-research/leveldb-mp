@@ -10,4 +10,5 @@ client
 leveldb_daemon
 *.pb.cc
 *.pb.h
+*.a
 

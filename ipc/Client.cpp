@@ -2,7 +2,6 @@
 // Created by abdullin on 2/29/16.
 //
 
-#include <sstream>
 #include <string.h>
 
 #include "Client.h"

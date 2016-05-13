@@ -2,6 +2,8 @@
 // Created by abdullin on 4/28/16.
 //
 
+#include <sstream>
+
 #include "Util.h"
 
 namespace leveldb_daemon {
