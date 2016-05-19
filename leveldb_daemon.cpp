@@ -36,19 +36,15 @@ int monitorProcess(const std::string& db_name, const std::string& socket_name) {
         pid = fork();
 
         if (pid == -1) {
-            log.print("[MONITOR] Fork failed \n");
+            log.print("[MONITOR] Fork failed");
         } else if (not pid) {
-            if (not leveldb_daemon::util::isFileExists(DAEMON_FILE_PATH)) {
-                retval = workProcess(db_name, socket_name);
+            retval = workProcess(db_name, socket_name);
 
-                if (std::remove(DAEMON_FILE_PATH.c_str()) != 0) {
-                    log.print("error while deleting daemon file");
-                }
-
-                exit(retval);
-            } else {
-                exit(0);
+            if (std::remove(DAEMON_FILE_PATH.c_str()) != 0) {
+                log.print("error while deleting daemon file");
             }
+
+            exit(retval);
         } else {
             sigwaitinfo(&sigset, &siginfo);
 

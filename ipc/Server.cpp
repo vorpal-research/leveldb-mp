@@ -11,18 +11,21 @@ namespace leveldb_daemon {
 namespace ipc {
 
 Server::Server() : db_(DEFAULT_DB_NAME), server_(DEFAULT_SOCKET_NAME), buf_size_(DEFAULT_BUF_SIZE) {
+    log_.print("Creating server");
     buffer_ = new char[buf_size_];
     memset(buffer_, 0, buf_size_);
 }
 
 Server::Server(const std::string &dbName)
         : db_(dbName), server_(DEFAULT_SOCKET_NAME), buf_size_(DEFAULT_BUF_SIZE) {
+    log_.print("Creating server");
     buffer_ = new char[buf_size_];
     memset(buffer_, 0, buf_size_);
 }
 
 Server::Server(const std::string &dbName, const std::string &socketName)
         : db_(dbName), server_(socketName), buf_size_(DEFAULT_BUF_SIZE) {
+    log_.print("Creating server");
     buffer_ = new char[buf_size_];
     memset(buffer_, 0, buf_size_);
 }
