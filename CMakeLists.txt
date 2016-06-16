@@ -5,6 +5,9 @@ include_directories(/usr/include/leveldb)
 include_directories(libsocket/headers)
 add_subdirectory(libsocket)
 
+set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/lib)
+
 #daemon executable
 project(leveldb_daemon)
 
@@ -22,7 +25,6 @@ set_property(TARGET leveldb_daemon PROPERTY CXX_STANDARD_REQUIRED ON)
 add_dependencies(leveldb_daemon socket++)
 target_link_libraries(leveldb_daemon socket++)
 target_link_libraries(leveldb_daemon leveldb)
-
 
 #shared library for client
 project(leveldb_client)
