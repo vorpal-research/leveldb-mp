@@ -50,9 +50,7 @@ public:
     Iterator(leveldb::Iterator *it, const Key &limit);
 
     void next();
-
     bool valid() const;
-
     Value value() const;
 
 private:

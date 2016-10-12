@@ -42,7 +42,7 @@ private:
     std::string successCmd() const  { return "ok_"; }
     std::string failCmd() const     { return "nok"; }
 
-    void resizeBuffer(size_t size);
+    void reallocBuffer(size_t size);
 
 private:
 

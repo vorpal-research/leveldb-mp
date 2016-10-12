@@ -25,7 +25,7 @@ Database::Database(const std::string &path) {
 }
 
 bool Database::put(const std::string &key, Value value) {
-    auto&& status = db_->Put(WriteOptions(), Slice(key), Slice(value.data(), value.size()));
+    auto&& status = db_->Put(WriteOptions(), Slice(key), value);
 
     if (not status.ok()) {
         logger_.print(status.ToString());
