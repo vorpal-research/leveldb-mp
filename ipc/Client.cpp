@@ -51,6 +51,7 @@ std::pair<char*, size_t> Client::get(const std::string& key) {
     } catch (const libsocket::socket_exception& exc) {
         log_.print(exc.mesg);
     }
+    return {nullptr, 0};
 }
 
 Client::DataArray Client::getAll(const std::string &key) {
