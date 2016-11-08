@@ -34,7 +34,7 @@ set(LIB_SOURCE_FILES
         ipc/Client.cpp
         include/DB.cpp
         logging/Logger.h
-        serializer/Serializer.hpp
+        include/Serializer.hpp
         util/Util.cpp)
 
 add_library(leveldb_client STATIC ${LIB_SOURCE_FILES})

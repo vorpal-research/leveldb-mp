@@ -5,7 +5,7 @@
 
 #include "../ipc/Client.h"
 #include "../ipc/Server.h"
-#include "../serializer/Serializer.hpp"
+#include "Serializer.hpp"
 #include "../util/Util.h"
 
 
