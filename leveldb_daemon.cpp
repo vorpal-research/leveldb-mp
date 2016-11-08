@@ -90,6 +90,8 @@ int main(int argc, char** argv) {
         std::ofstream file;
         file.open(DAEMON_FILE_PATH);
         file << pid << std::endl;
+        file << db_name << std::endl;
+        file << socket_name << std::endl;
         file.close();
         return 0;
     }
