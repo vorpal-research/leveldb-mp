@@ -15,10 +15,10 @@ Database::Database(const std::string &path) {
     options.compression = kNoCompression;
 
     DB *db;
-    logger_.print("Open database:" + path);
+    logger_ << "Open database:" << path << logging::endl;
     auto&& status = DB::Open(options, path, &db);
     if (not status.ok()) {
-        logger_.print(status.ToString());
+        logger_ << status.ToString() << logging::endl;
         exit(1);
     }
     db_.reset(db);
@@ -28,7 +28,7 @@ bool Database::put(const std::string &key, Value value) {
     auto&& status = db_->Put(WriteOptions(), Slice(key), value);
 
     if (not status.ok()) {
-        logger_.print(status.ToString());
+        logger_ << status.ToString() << logging::endl;
     }
 
     return status.ok();

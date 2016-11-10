@@ -15,6 +15,7 @@ project(leveldb_daemon)
 set(DAEMON_SOURCE_FILES
         leveldb_daemon.cpp
         ipc/Server.cpp
+        ipc/Command.cpp
         logging/Logger.h
         storage/Database.cpp
         util/Util.cpp)
@@ -32,6 +33,7 @@ project(leveldb_client)
 
 set(LIB_SOURCE_FILES
         ipc/Client.cpp
+        ipc/Command.cpp
         include/DB.cpp
         logging/Logger.h
         include/Serializer.hpp

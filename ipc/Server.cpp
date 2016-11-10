@@ -4,28 +4,30 @@
 
 #include <unistd.h>
 
+#include "ipc/Command.h"
+#include "util/Util.h"
+
 #include "Server.h"
-#include "../util/Util.h"
 
 namespace leveldb_daemon {
 namespace ipc {
 
 Server::Server() : db_(DEFAULT_DB_NAME), server_(DEFAULT_SOCKET_NAME), buf_size_(DEFAULT_BUF_SIZE) {
-    log_.print("Creating server");
+    log_ << "Creating server" << logging::endl;
     buffer_ = new char[buf_size_];
     memset(buffer_, 0, buf_size_);
 }
 
 Server::Server(const std::string &dbName)
         : db_(dbName), server_(DEFAULT_SOCKET_NAME), buf_size_(DEFAULT_BUF_SIZE) {
-    log_.print("Creating server");
+    log_ << "Creating server" << logging::endl;
     buffer_ = new char[buf_size_];
     memset(buffer_, 0, buf_size_);
 }
 
 Server::Server(const std::string &dbName, const std::string &socketName)
         : db_(dbName), server_(socketName), buf_size_(DEFAULT_BUF_SIZE) {
-    log_.print("Creating server");
+    log_ << "Creating server" << logging::endl;
     buffer_ = new char[buf_size_];
     memset(buffer_, 0, buf_size_);
 }
@@ -56,9 +58,9 @@ int Server::work() {
             std::string cmd;
             cmd.resize(CMD_LENGTH);
             *client >> cmd;
-            log_.print("Received cmd: " + cmd);
+            log_ << "Received cmd: " << cmd << logging::endl;
 
-            if (cmd == endCmd()) {
+            if (cmd == Command::endCmd) {
                 client->shutdown();
                 delete client;
                 break;
@@ -72,9 +74,9 @@ int Server::work() {
             std::string key;
             key.resize(keySize);
             *client >> key;
-            log_.print("Received key: " + key);
+            log_ << "Received key: " << key << logging::endl;
 
-            if (cmd == putCmd()) {
+            if (cmd == Command::putCmd) {
                 std::string dataSizeStr;
                 dataSizeStr.resize(WIDTH);
                 *client >> dataSizeStr;
@@ -82,30 +84,29 @@ int Server::work() {
                 if (dataSize > buf_size_) reallocBuffer(dataSize);
 
                 auto totalRecvd = 0;
-                log_.print("Receiving data with size: " + dataSizeStr);
+                log_ << "Receiving data with size: " << dataSizeStr << logging::endl;
                 while (totalRecvd < dataSize) {
                     auto recvSize = client->rcv(buffer_ + totalRecvd, dataSize - totalRecvd);
                     if (recvSize < 0) {
-                        log_.print("Error while receiving");
-                        log_.print("Received data:");
-                        log_.print(totalRecvd);
+                        log_ << "Error while receiving" << logging::endl;
+                        log_ << "Received data:" << totalRecvd << logging::endl;
                         break;
                     }
                     totalRecvd += recvSize;
                 }
-                log_.print("Received");
+                log_ << "Received" << logging::endl;
 
 
                 leveldb::Slice data(buffer_, dataSize);
                 if (not db_.put(key, data)) {
-                    log_.print("Error while putting data into db with key: " + key);
-                    client->snd(failCmd().c_str(), CMD_LENGTH);
+                    log_ << "Error while putting data into db with key: " << key << logging::endl;
+                    client->snd(Command::failCmd.c_str(), CMD_LENGTH);
                 } else {
-                    client->snd(successCmd().c_str(), CMD_LENGTH);
+                    client->snd(Command::successCmd.c_str(), CMD_LENGTH);
                 }
                 memset(buffer_, 0, dataSize);
 
-            } else if (cmd == getAllCmd()) {
+            } else if (cmd == Command::getAllCmd) {
                 auto&& it = db_.get(key, key);
                 while (it.valid()) {
                     auto&& size = util::intToHexString(it.value().size(), WIDTH);
@@ -114,28 +115,28 @@ int Server::work() {
                     it.next();
                 }
                 auto&& size = util::intToHexString(CMD_LENGTH, WIDTH);
-                *client << size << endCmd();
+                *client << size << Command::endCmd;
 
-            } else if (cmd == getOneCmd()) {
+            } else if (cmd == Command::getOneCmd) {
                 auto&& val = db_.get(key);
                 auto&& size = util::intToHexString(val.size(), WIDTH);
                 client->snd(size.c_str(), size.length());
                 if (val.size() > 0) {
                     client->snd(val.data(), val.size());
                 } else {
-                    log_.print("Data not found");
+                    log_ << "Data not found" << logging::endl;
                 }
 
             } else {
-                log_.print("Unknown command from client: " + cmd);
-                log_.print("Disconnecting current client");
+                log_ << "Unknown command from client: " << cmd << logging::endl;
+                log_ << "Disconnecting current client" << logging::endl;
                 client->shutdown();
                 delete client;
                 break;
             }
         }
     } catch (const libsocket::socket_exception& ex) {
-        log_.print(ex.mesg);
+        log_ << ex.mesg << logging::endl;
     }
 
     }
@@ -149,7 +150,7 @@ void Server::reallocBuffer(size_t size) {
         buffer_ = newBuffer;
         buf_size_ = size;
     } else {
-        log_.print("Error: trying to initialize buffer with negative length");
+        log_ << "Error: trying to initialize buffer with negative length" << logging::endl;
     }
 }
 

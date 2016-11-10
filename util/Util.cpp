@@ -26,7 +26,7 @@ std::string intToHexString(const int num, const size_t width) {
         std::string nulls(width - res.length(), '0');
         res.insert(0, nulls);
     } else if (res.length() > width) {
-        log.print("Error: size of data is too big");
+        log << "Error: size of data is too big" << logging::endl;
         res = std::string(width, '0');
     }
     return res;

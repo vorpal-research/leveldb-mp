@@ -7,8 +7,8 @@
 
 #include <unixserverstream.hpp>
 
-#include "../storage/Database.h"
-#include "../logging/Logger.h"
+#include "logging/Logger.h"
+#include "storage/Database.h"
 
 namespace leveldb_daemon {
 namespace ipc {
@@ -34,13 +34,6 @@ public:
     void destroy();
 
 private:
-
-    std::string putCmd() const      { return "put"; }
-    std::string getAllCmd() const   { return "gta"; }
-    std::string getOneCmd() const   { return "gto"; }
-    std::string endCmd() const      { return "end"; }
-    std::string successCmd() const  { return "ok_"; }
-    std::string failCmd() const     { return "nok"; }
 
     void reallocBuffer(size_t size);
 

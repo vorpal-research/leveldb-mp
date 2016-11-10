@@ -9,9 +9,12 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <bits/shared_ptr.h>
 
 namespace leveldb_daemon {
 namespace logging {
+
+static std::string endl = "\n";
 
 static std::ostream& show_time(std::ostream& out) {
     time_t time_val;
@@ -41,20 +44,13 @@ public:
         logstream.open(logfile, std::ios::app);
     }
 
-    void print(const std::string& msg) {
-        logstream << show_time << msg << std::endl;
-    }
-
-    void print(const char* msg) {
-        logstream << show_time << msg << std::endl;
-    }
-
-    void print(const int msg) {
-        logstream << show_time << msg << std::endl;
-    }
-
     ~Logger() {
         logstream.close();
+    }
+
+    template<typename T>
+    Logger& operator<<(const T& data) {
+        logstream << data;
     }
 
 private:

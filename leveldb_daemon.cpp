@@ -21,7 +21,9 @@ int monitorProcess(const std::string& db_name, const std::string& socket_name) {
     int pid, retval;
     sigset_t sigset;
     siginfo_t siginfo;
-    leveldb_daemon::logging::Logger log;
+
+    using namespace leveldb_daemon::logging;
+    Logger log;
 
     sigemptyset(&sigset);
     sigaddset(&sigset, SIGQUIT);        //process stopped by user
@@ -36,12 +38,12 @@ int monitorProcess(const std::string& db_name, const std::string& socket_name) {
         pid = fork();
 
         if (pid == -1) {
-            log.print("[MONITOR] Fork failed");
+            log << "[MONITOR] Fork failed" << endl;
         } else if (not pid) {
             retval = workProcess(db_name, socket_name);
 
             if (std::remove(DAEMON_FILE_PATH.c_str()) != 0) {
-                log.print("error while deleting daemon file");
+                log << "error while deleting daemon file" << endl;
             }
 
             exit(retval);
@@ -55,7 +57,7 @@ int monitorProcess(const std::string& db_name, const std::string& socket_name) {
                 retval = 0;
 
                 if (std::remove(DAEMON_FILE_PATH.c_str()) != 0) {
-                    log.print("error while deleting daemon file");
+                    log << "error while deleting daemon file" << endl;
                 }
 
                 break;

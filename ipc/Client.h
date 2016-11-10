@@ -7,9 +7,9 @@
 
 #include <vector>
 
-#include "unixclientstream.hpp"
+#include <unixclientstream.hpp>
 
-#include "../logging/Logger.h"
+#include "logging/Logger.h"
 
 namespace leveldb_daemon {
 namespace ipc {
@@ -35,13 +35,6 @@ public:
     void close();
 
 private:
-
-    std::string putCmd() const      { return "put"; }
-    std::string getAllCmd() const   { return "gta"; }
-    std::string getOneCmd() const   { return "gto"; }
-    std::string endCmd() const      { return "end"; }
-    std::string successCmd() const  { return "ok_"; }
-    std::string failCmd() const     { return "nok"; }
 
     bool receiveData(char *buffer, size_t size);
 
