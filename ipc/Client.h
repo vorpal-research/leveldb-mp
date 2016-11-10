@@ -14,7 +14,7 @@
 namespace leveldb_daemon {
 namespace ipc {
 
-class Client {
+class Client: public logging::ObjectLogger {
 
 public:
 
@@ -41,7 +41,6 @@ private:
 private:
 
     libsocket::unix_stream_client client_;
-    logging::Logger log_;
     bool opened_;
 
 };

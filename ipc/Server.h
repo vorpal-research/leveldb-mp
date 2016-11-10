@@ -13,7 +13,7 @@
 namespace leveldb_daemon {
 namespace ipc {
 
-class Server {
+class Server: public logging::ObjectLogger {
 
 public:
 
@@ -41,7 +41,6 @@ private:
 
     storage::Database db_;
     libsocket::unix_stream_server server_;
-    logging::Logger log_;
     char* buffer_;
     size_t buf_size_;
 

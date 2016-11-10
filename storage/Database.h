@@ -16,7 +16,7 @@
 namespace leveldb_daemon {
 namespace storage {
 
-class Database {
+class Database: public logging::ObjectLogger {
 
 public:
 
@@ -35,7 +35,6 @@ public:
 private:
 
     std::shared_ptr<leveldb::DB> db_;
-    logging::Logger logger_;
 
 };
 

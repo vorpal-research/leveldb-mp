@@ -9,7 +9,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <bits/shared_ptr.h>
 
 namespace leveldb_daemon {
 namespace logging {
@@ -33,7 +32,6 @@ static std::ostream& show_time(std::ostream& out) {
     out << "[" << year << "-" << month << "-" << day << " " << hour << ":" << minute << ":" << second << "] ";
     return out;
 }
-
 class Logger {
 
 public:
@@ -56,6 +54,24 @@ public:
 private:
 
     std::ofstream logstream;
+
+};
+
+class ObjectLogger {
+
+public:
+
+    ObjectLogger() : stream() {}
+    ObjectLogger(const std::string& domain) : stream(domain) {}
+
+    Logger& log() {
+        stream << show_time;
+        return stream;
+    }
+
+private:
+
+    Logger stream;
 
 };
 

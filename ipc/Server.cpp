@@ -12,28 +12,29 @@
 namespace leveldb_daemon {
 namespace ipc {
 
-Server::Server() : db_(DEFAULT_DB_NAME), server_(DEFAULT_SOCKET_NAME), buf_size_(DEFAULT_BUF_SIZE) {
-    log_ << "Creating server" << logging::endl;
+Server::Server()
+        : ObjectLogger(), db_(DEFAULT_DB_NAME), server_(DEFAULT_SOCKET_NAME), buf_size_(DEFAULT_BUF_SIZE) {
+    log() << "Creating server" << logging::endl;
     buffer_ = new char[buf_size_];
     memset(buffer_, 0, buf_size_);
 }
 
 Server::Server(const std::string &dbName)
-        : db_(dbName), server_(DEFAULT_SOCKET_NAME), buf_size_(DEFAULT_BUF_SIZE) {
-    log_ << "Creating server" << logging::endl;
+        : ObjectLogger(), db_(dbName), server_(DEFAULT_SOCKET_NAME), buf_size_(DEFAULT_BUF_SIZE) {
+    log() << "Creating server" << logging::endl;
     buffer_ = new char[buf_size_];
     memset(buffer_, 0, buf_size_);
 }
 
 Server::Server(const std::string &dbName, const std::string &socketName)
-        : db_(dbName), server_(socketName), buf_size_(DEFAULT_BUF_SIZE) {
-    log_ << "Creating server" << logging::endl;
+        : ObjectLogger(), db_(dbName), server_(socketName), buf_size_(DEFAULT_BUF_SIZE) {
+    log() << "Creating server" << logging::endl;
     buffer_ = new char[buf_size_];
     memset(buffer_, 0, buf_size_);
 }
 
 Server::Server(const std::string &dbName, const std::string &socketName, const size_t bufferSize)
-        : db_(dbName), server_(socketName), buf_size_(bufferSize) {
+        : ObjectLogger(), db_(dbName), server_(socketName), buf_size_(bufferSize) {
     buffer_ = new char[buf_size_];
     memset(buffer_, 0, buf_size_);
 }
@@ -58,7 +59,7 @@ int Server::work() {
             std::string cmd;
             cmd.resize(CMD_LENGTH);
             *client >> cmd;
-            log_ << "Received cmd: " << cmd << logging::endl;
+            log() << "Received cmd: " << cmd << logging::endl;
 
             if (cmd == Command::endCmd) {
                 client->shutdown();
@@ -74,7 +75,7 @@ int Server::work() {
             std::string key;
             key.resize(keySize);
             *client >> key;
-            log_ << "Received key: " << key << logging::endl;
+            log() << "Received key: " << key << logging::endl;
 
             if (cmd == Command::putCmd) {
                 std::string dataSizeStr;
@@ -84,22 +85,22 @@ int Server::work() {
                 if (dataSize > buf_size_) reallocBuffer(dataSize);
 
                 auto totalRecvd = 0;
-                log_ << "Receiving data with size: " << dataSizeStr << logging::endl;
+                log() << "Receiving data with size: " << dataSizeStr << logging::endl;
                 while (totalRecvd < dataSize) {
                     auto recvSize = client->rcv(buffer_ + totalRecvd, dataSize - totalRecvd);
                     if (recvSize < 0) {
-                        log_ << "Error while receiving" << logging::endl;
-                        log_ << "Received data:" << totalRecvd << logging::endl;
+                        log() << "Error while receiving" << logging::endl;
+                        log() << "Received data:" << totalRecvd << logging::endl;
                         break;
                     }
                     totalRecvd += recvSize;
                 }
-                log_ << "Received" << logging::endl;
+                log() << "Received" << logging::endl;
 
 
                 leveldb::Slice data(buffer_, dataSize);
                 if (not db_.put(key, data)) {
-                    log_ << "Error while putting data into db with key: " << key << logging::endl;
+                    log() << "Error while putting data into db with key: " << key << logging::endl;
                     client->snd(Command::failCmd.c_str(), CMD_LENGTH);
                 } else {
                     client->snd(Command::successCmd.c_str(), CMD_LENGTH);
@@ -124,19 +125,19 @@ int Server::work() {
                 if (val.size() > 0) {
                     client->snd(val.data(), val.size());
                 } else {
-                    log_ << "Data not found" << logging::endl;
+                    log() << "Data not found" << logging::endl;
                 }
 
             } else {
-                log_ << "Unknown command from client: " << cmd << logging::endl;
-                log_ << "Disconnecting current client" << logging::endl;
+                log() << "Unknown command from client: " << cmd << logging::endl;
+                log() << "Disconnecting current client" << logging::endl;
                 client->shutdown();
                 delete client;
                 break;
             }
         }
     } catch (const libsocket::socket_exception& ex) {
-        log_ << ex.mesg << logging::endl;
+        log() << ex.mesg << logging::endl;
     }
 
     }
@@ -150,7 +151,7 @@ void Server::reallocBuffer(size_t size) {
         buffer_ = newBuffer;
         buf_size_ = size;
     } else {
-        log_ << "Error: trying to initialize buffer with negative length" << logging::endl;
+        log() << "Error: trying to initialize buffer with negative length" << logging::endl;
     }
 }
 

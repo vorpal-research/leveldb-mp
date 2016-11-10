@@ -9,16 +9,16 @@ using namespace leveldb;
 namespace leveldb_daemon {
 namespace storage {
 
-Database::Database(const std::string &path) {
+Database::Database(const std::string &path) : ObjectLogger() {
     Options options;
     options.create_if_missing = true;
     options.compression = kNoCompression;
 
     DB *db;
-    logger_ << "Open database:" << path << logging::endl;
+    log() << "Open database:" << path << logging::endl;
     auto&& status = DB::Open(options, path, &db);
     if (not status.ok()) {
-        logger_ << status.ToString() << logging::endl;
+        log() << status.ToString() << logging::endl;
         exit(1);
     }
     db_.reset(db);
@@ -28,7 +28,7 @@ bool Database::put(const std::string &key, Value value) {
     auto&& status = db_->Put(WriteOptions(), Slice(key), value);
 
     if (not status.ok()) {
-        logger_ << status.ToString() << logging::endl;
+        log() << status.ToString() << logging::endl;
     }
 
     return status.ok();
