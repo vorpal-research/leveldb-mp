@@ -13,8 +13,6 @@
 namespace leveldb_daemon {
 namespace logging {
 
-static std::string endl = "\n";
-
 static std::ostream& show_time(std::ostream& out) {
     time_t time_val;
     time(&time_val);
@@ -32,6 +30,7 @@ static std::ostream& show_time(std::ostream& out) {
     out << "[" << year << "-" << month << "-" << day << " " << hour << ":" << minute << ":" << second << "] ";
     return out;
 }
+
 class Logger {
 
 public:
@@ -74,6 +73,11 @@ private:
     Logger stream;
 
 };
+
+static Logger& endl(Logger& out) {
+    out << "\n";
+    return out;
+}
 
 }   /* namespace logging */
 }   /* namespace leveldb_daemon */
