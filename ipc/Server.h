@@ -7,8 +7,8 @@
 
 #include <unixserverstream.hpp>
 
-#include "logging/Logger.h"
-#include "storage/Database.h"
+#include "../logging/Logger.h"
+#include "../storage/Database.h"
 
 namespace leveldb_daemon {
 namespace ipc {
