@@ -48,6 +48,7 @@ public:
     template<typename T>
     Logger& operator<<(const T& data) {
         logstream << data;
+        return *this;
     }
 
 private:

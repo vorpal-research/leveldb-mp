@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.3)
 
-include_directories(./ ../)
 include_directories(/usr/include/leveldb)
 include_directories(libsocket/headers)
 add_subdirectory(libsocket)
@@ -31,7 +30,6 @@ target_link_libraries(leveldb_daemon leveldb)
 
 #shared library for client
 project(leveldb_client)
-include_directories(${leveldb_client_SOURCE_DIR})
 
 set(LIB_SOURCE_FILES
         ipc/Client.cpp
