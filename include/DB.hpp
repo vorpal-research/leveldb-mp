@@ -3,10 +3,10 @@
 
 #include <memory>
 
-#include "../ipc/Client.h"
-#include "../ipc/Server.h"
+#include "ipc/Client.h"
+#include "ipc/Server.h"
 #include "Serializer.hpp"
-#include "../util/Util.h"
+#include "util/Util.h"
 
 
 namespace leveldb_daemon {

@@ -9,7 +9,7 @@
 
 #include <unixclientstream.hpp>
 
-#include "../logging/Logger.h"
+#include "logging/Logger.h"
 
 namespace leveldb_daemon {
 namespace ipc {

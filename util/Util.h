@@ -8,7 +8,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "../logging/Logger.h"
+#include "logging/Logger.h"
 
 namespace leveldb_daemon {
 namespace util {
