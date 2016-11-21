@@ -7,7 +7,7 @@
 #include "ipc/Command.h"
 #include "util/Util.h"
 
-#include "Client.h"
+#include "ipc/Client.h"
 
 namespace leveldb_daemon {
 namespace ipc {

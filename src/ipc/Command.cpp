@@ -2,7 +2,7 @@
 // Created by abdullin on 11/9/16.
 //
 
-#include "Command.h"
+#include "ipc/Command.h"
 
 namespace leveldb_daemon {
 namespace ipc {

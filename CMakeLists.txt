@@ -10,15 +10,14 @@ link_directories(${CMAKE_CURRENT_BINARY_DIR}/lib)
 
 #daemon executable
 project(leveldb_daemon)
-include_directories(${leveldb_daemon_SOURCE_DIR})
+include_directories(${leveldb_daemon_SOURCE_DIR}/include)
 
 set(DAEMON_SOURCE_FILES
-        leveldb_daemon.cpp
-        ipc/Server.cpp
-        ipc/Command.cpp
-        logging/Logger.h
-        storage/Database.cpp
-        util/Util.cpp)
+        src/leveldb_daemon.cpp
+        src/ipc/Server.cpp
+        src/ipc/Command.cpp
+        src/storage/Database.cpp
+        src/util/Util.cpp)
 
 add_executable(leveldb_daemon ${DAEMON_SOURCE_FILES})
 set_property(TARGET leveldb_daemon PROPERTY CXX_STANDARD 14)
@@ -30,14 +29,14 @@ target_link_libraries(leveldb_daemon leveldb)
 
 #shared library for client
 project(leveldb_client)
+include_directories(${leveldb_client_SOURCE_DIR}/include)
 
 set(LIB_SOURCE_FILES
-        ipc/Client.cpp
-        ipc/Command.cpp
-        include/DB.cpp
-        logging/Logger.h
+        src/ipc/Client.cpp
+        src/ipc/Command.cpp
+        src/DB.cpp
         include/Serializer.hpp
-        util/Util.cpp)
+        src/util/Util.cpp)
 
 add_library(leveldb_client STATIC ${LIB_SOURCE_FILES})
 set_property(TARGET leveldb_client PROPERTY CXX_STANDARD 14)
