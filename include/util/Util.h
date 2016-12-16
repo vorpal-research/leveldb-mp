@@ -10,7 +10,7 @@
 
 #include "logging/Logger.h"
 
-namespace leveldb_daemon {
+namespace leveldb_mp {
 namespace util {
 
 bool isFileExists(const std::string& path);

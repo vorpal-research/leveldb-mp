@@ -9,7 +9,7 @@
 
 #include "ipc/Server.h"
 
-namespace leveldb_daemon {
+namespace leveldb_mp {
 namespace ipc {
 
 Server::Server()

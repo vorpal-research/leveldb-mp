@@ -4,7 +4,7 @@
 #include <iostream>
 #include <memory>
 
-namespace leveldb_daemon {
+namespace leveldb_mp {
 namespace serializer {
 
 struct Buffer{

@@ -4,13 +4,15 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "Config.h"
 #include "ipc/Server.h"
 #include "util/Util.h"
 
-const std::string DAEMON_FILE_PATH = "/tmp/leveldb_daemon_started";
+std::string daemon_file = leveldb_mp::config::DAEMON_FILE_PATH;
 
 int workProcess(const std::string& db_name, const std::string& socket_name) {
-    leveldb_daemon::ipc::Server server(db_name, socket_name);
+    using namespace leveldb_mp;
+    ipc::Server server(config::OUTPUT_FILE_PATH + db_name, config::OUTPUT_FILE_PATH + socket_name);
     server.work();
     server.destroy();
     return 0;
@@ -22,7 +24,7 @@ int monitorProcess(const std::string& db_name, const std::string& socket_name) {
     sigset_t sigset;
     siginfo_t siginfo;
 
-    using namespace leveldb_daemon::logging;
+    using namespace leveldb_mp::logging;
     Logger log;
 
     sigemptyset(&sigset);
@@ -42,7 +44,7 @@ int monitorProcess(const std::string& db_name, const std::string& socket_name) {
         } else if (not pid) {
             retval = workProcess(db_name, socket_name);
 
-            if (std::remove(DAEMON_FILE_PATH.c_str()) != 0) {
+            if (std::remove(daemon_file.c_str()) != 0) {
                 log << "error while deleting daemon file" << endl;
             }
 
@@ -56,7 +58,7 @@ int monitorProcess(const std::string& db_name, const std::string& socket_name) {
                 kill(pid, SIGKILL);
                 retval = 0;
 
-                if (std::remove(DAEMON_FILE_PATH.c_str()) != 0) {
+                if (std::remove(daemon_file.c_str()) != 0) {
                     log << "error while deleting daemon file" << endl;
                 }
 
@@ -89,11 +91,10 @@ int main(int argc, char** argv) {
 
         return status;
     } else {
-        std::ofstream file;
-        file.open(DAEMON_FILE_PATH);
+        daemon_file += socket_name;
+        std::ofstream file(daemon_file);
         file << pid << std::endl;
         file << db_name << std::endl;
-        file << socket_name << std::endl;
         file.close();
         return 0;
     }

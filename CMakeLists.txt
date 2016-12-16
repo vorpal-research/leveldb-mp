@@ -34,13 +34,12 @@ include_directories(${leveldb_client_SOURCE_DIR}/include)
 set(LIB_SOURCE_FILES
         src/ipc/Client.cpp
         src/ipc/Command.cpp
-        src/DB.cpp
         include/Serializer.hpp
         src/util/Util.cpp)
 
-add_library(leveldb_client STATIC ${LIB_SOURCE_FILES})
-set_property(TARGET leveldb_client PROPERTY CXX_STANDARD 14)
-set_property(TARGET leveldb_client PROPERTY CXX_STANDARD_REQUIRED ON)
+add_library(leveldb_mp STATIC ${LIB_SOURCE_FILES})
+set_property(TARGET leveldb_mp PROPERTY CXX_STANDARD 14)
+set_property(TARGET leveldb_mp PROPERTY CXX_STANDARD_REQUIRED ON)
 
-add_dependencies(leveldb_client socket++)
-target_link_libraries(leveldb_client socket++)
+add_dependencies(leveldb_mp socket++)
+target_link_libraries(leveldb_mp socket++)

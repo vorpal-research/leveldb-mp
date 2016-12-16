@@ -9,25 +9,24 @@
 #include "util/Util.h"
 
 
-namespace leveldb_daemon {
+namespace leveldb_mp {
 
 class DB {
 
 public:
 
     using Ptr = std::shared_ptr<DB>;
-    static const std::string DAEMON_FILE_PATH;
 
     static DB::Ptr getInstance() {
         static DB::Ptr instance_ = DB::Ptr(new DB{});
         return instance_;
     }
 
-    static bool isDaemonStarted() {
-        return util::isFileExists(DAEMON_FILE_PATH);
+    static bool isDaemonStarted(const std::string& socket_name) {
+        return util::isFileExists(config::DAEMON_FILE_PATH + socket_name);
     }
 
-    void setSocket(const std::string& socket_name) {
+    void connect(const std::string& socket_name) {
         socket_name_ = socket_name;
     }
 

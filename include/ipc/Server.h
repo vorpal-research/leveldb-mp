@@ -10,7 +10,7 @@
 #include "logging/Logger.h"
 #include "storage/Database.h"
 
-namespace leveldb_daemon {
+namespace leveldb_mp {
 namespace ipc {
 
 class Server: public logging::ObjectLogger {

@@ -10,7 +10,9 @@
 #include <iostream>
 #include <string>
 
-namespace leveldb_daemon {
+#include "Config.h"
+
+namespace leveldb_mp {
 namespace logging {
 
 static std::ostream& show_time(std::ostream& out) {
@@ -35,7 +37,7 @@ class Logger {
 
 public:
 
-    Logger() : Logger("/tmp/leveldb-api.log") { }
+    Logger() : Logger(config::LOG_FILE) { }
 
     Logger(const std::string& logfile) {
         logstream.open(logfile, std::ios::app);

@@ -6,7 +6,7 @@
 
 using namespace leveldb;
 
-namespace leveldb_daemon {
+namespace leveldb_mp {
 namespace storage {
 
 Database::Database(const std::string &path) : ObjectLogger() {

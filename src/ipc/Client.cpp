@@ -9,7 +9,7 @@
 
 #include "ipc/Client.h"
 
-namespace leveldb_daemon {
+namespace leveldb_mp {
 namespace ipc {
 
 Client::Client() : ObjectLogger(LOG_FILE), opened_(false) { }
