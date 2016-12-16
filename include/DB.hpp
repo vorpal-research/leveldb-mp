@@ -27,7 +27,7 @@ public:
     }
 
     void connect(const std::string& socket_name) {
-        socket_name_ = socket_name;
+        socket_name_ = config::OUTPUT_FILE_PATH + socket_name;
     }
 
     void lock() {
@@ -113,6 +113,6 @@ private:
 
 };
 
-}   /* namespace leveldb_daemon */
+}   /* namespace leveldb_mp */
 
 #endif

@@ -24,6 +24,6 @@ public:
 };
 
 }   /* namespace ipc */
-}   /* namespace leveldb_daemon */
+}   /* namespace leveldb_mp */
 
 #endif //LEVELDB_CLIENT_COMMAND_H

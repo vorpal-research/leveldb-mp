@@ -74,4 +74,4 @@ Database::Value Database::Iterator::value() const {
 }
 
 }   /* namespace storage */
-}   /* namespace leveldb_daemon */
+}   /* namespace leveldb_mp */

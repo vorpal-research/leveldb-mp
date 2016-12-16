@@ -40,6 +40,6 @@ struct deserializer {
 };
 
 }   /* namespace serializer */
-}   /* namespace leveldb_daemon */
+}   /* namespace leveldb_mp */
 
 #endif

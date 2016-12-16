@@ -152,4 +152,4 @@ bool Client::receiveData(char *buffer, size_t size) {
 }
 
 }   /* namespace ipc */
-}   /* namespace leveldb_daemon */
+}   /* namespace leveldb_mp */

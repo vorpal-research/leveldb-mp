@@ -46,6 +46,6 @@ private:
 };
 
 }   /* namespace ipc */
-}   /* namespace leveldb_daemon */
+}   /* namespace leveldb_mp */
 
 #endif //CLIENT_CLIENT_H

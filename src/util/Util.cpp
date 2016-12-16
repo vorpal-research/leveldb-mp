@@ -41,4 +41,4 @@ int hexStringToInt(const std::string& str) {
 }
 
 }   /* namespace utl */
-}   /* namespace leveldb_daemon */
+}   /* namespace leveldb_mp */

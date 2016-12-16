@@ -19,6 +19,6 @@ std::string intToHexString(const int num, const size_t width);
 int hexStringToInt(const std::string& str);
 
 }   /* namespace utl */
-}   /* namespace leveldb_daemon */
+}   /* namespace leveldb_mp */
 
 #endif //LEVELDB_MP_UTIL_H

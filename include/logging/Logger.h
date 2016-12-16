@@ -83,6 +83,6 @@ static Logger& endl(Logger& out) {
 }
 
 }   /* namespace logging */
-}   /* namespace leveldb_daemon */
+}   /* namespace leveldb_mp */
 
 #endif //LEVELDB_API_LOGGER_H

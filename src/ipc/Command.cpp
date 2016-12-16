@@ -15,4 +15,4 @@ const std::string Command::successCmd = "ok_";
 const std::string Command::failCmd = "nok";
 
 }   /* namespace ipc */
-}   /* namespace leveldb_daemon */
+}   /* namespace leveldb_mp */

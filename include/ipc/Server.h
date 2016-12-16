@@ -47,6 +47,6 @@ private:
 };
 
 }   /* namespace ipc */
-}   /* namespace leveldb_daemon */
+}   /* namespace leveldb_mp */
 
 #endif //LEVELDB_API_SERVER_H
