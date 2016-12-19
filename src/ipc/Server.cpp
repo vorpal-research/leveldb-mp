@@ -13,14 +13,14 @@ namespace leveldb_mp {
 namespace ipc {
 
 Server::Server()
-        : ObjectLogger(), db_(DEFAULT_DB_NAME), server_(DEFAULT_SOCKET_NAME), buf_size_(DEFAULT_BUF_SIZE) {
+        : ObjectLogger(), db_(config::DEFAULT_DB_NAME), server_(config::DEFAULT_SOCKET_NAME), buf_size_(DEFAULT_BUF_SIZE) {
     log() << "Creating server" << logging::endl;
     buffer_ = new char[buf_size_];
     memset(buffer_, 0, buf_size_);
 }
 
 Server::Server(const std::string &dbName)
-        : ObjectLogger(), db_(dbName), server_(DEFAULT_SOCKET_NAME), buf_size_(DEFAULT_BUF_SIZE) {
+        : ObjectLogger(), db_(dbName), server_(config::DEFAULT_SOCKET_NAME), buf_size_(DEFAULT_BUF_SIZE) {
     log() << "Creating server" << logging::endl;
     buffer_ = new char[buf_size_];
     memset(buffer_, 0, buf_size_);
@@ -154,9 +154,6 @@ void Server::reallocBuffer(size_t size) {
         log() << "Error: trying to initialize buffer with negative length" << logging::endl;
     }
 }
-
-const std::string Server::DEFAULT_DB_NAME = "/tmp/leveldb-testbase";
-const std::string Server::DEFAULT_SOCKET_NAME = "/tmp/leveldb-test-server-socket.soc";
 
 }   /* namespace ipc */
 }   /* namespace leveldb_mp */

@@ -22,12 +22,12 @@ public:
         return instance_;
     }
 
-    static bool isDaemonStarted(const std::string& socket_name) {
-        return util::isFileExists(config::DAEMON_FILE_PATH + socket_name);
+    static bool isDaemonStarted(const std::string& db_name) {
+        return util::isFileExists(config::DAEMON_FILE_PATH + db_name);
     }
 
-    void connect(const std::string& socket_name) {
-        socket_name_ = config::OUTPUT_FILE_PATH + socket_name;
+    void connect(const std::string& db_name) {
+        socket_name_ = config::OUTPUT_FILE_PATH + db_name + config::SOCKET_POSTFIX;
     }
 
     void lock() {

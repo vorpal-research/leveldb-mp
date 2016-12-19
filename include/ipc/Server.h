@@ -17,8 +17,6 @@ class Server: public logging::ObjectLogger {
 
 public:
 
-    static const std::string DEFAULT_DB_NAME;
-    static const std::string DEFAULT_SOCKET_NAME;
     static const size_t DEFAULT_BUF_SIZE = 64 * 1024;
 
     static const size_t WIDTH = 8;

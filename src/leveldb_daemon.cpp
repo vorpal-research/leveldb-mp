@@ -10,16 +10,17 @@
 
 std::string daemon_file = leveldb_mp::config::DAEMON_FILE_PATH;
 
-int workProcess(const std::string& db_name, const std::string& socket_name) {
+int workProcess(const std::string& socket_name) {
     using namespace leveldb_mp;
-    ipc::Server server(config::OUTPUT_FILE_PATH + db_name, config::OUTPUT_FILE_PATH + socket_name);
+    std::string name = config::OUTPUT_FILE_PATH + socket_name;
+    ipc::Server server(name, name + config::SOCKET_POSTFIX);
     server.work();
     server.destroy();
     return 0;
 }
 
 
-int monitorProcess(const std::string& db_name, const std::string& socket_name) {
+int monitorProcess(const std::string& socket_name) {
     int pid, retval;
     sigset_t sigset;
     siginfo_t siginfo;
@@ -42,7 +43,7 @@ int monitorProcess(const std::string& db_name, const std::string& socket_name) {
         if (pid == -1) {
             log << "[MONITOR] Fork failed" << endl;
         } else if (not pid) {
-            retval = workProcess(db_name, socket_name);
+            retval = workProcess(socket_name);
 
             if (std::remove(daemon_file.c_str()) != 0) {
                 log << "error while deleting daemon file" << endl;
@@ -70,8 +71,9 @@ int monitorProcess(const std::string& db_name, const std::string& socket_name) {
 }
 
 int main(int argc, char** argv) {
-    if (argc < 3) return -1;
-    std::string db_name(argv[1]), socket_name(argv[2]);
+    if (argc < 2) return -1;
+    std::string socket_name(argv[1]);
+    daemon_file += socket_name;
 
     auto pid = fork();
 
@@ -87,15 +89,11 @@ int main(int argc, char** argv) {
         close(STDOUT_FILENO);
         close(STDERR_FILENO);
 
-        auto status = monitorProcess(db_name, socket_name);
-
-        return status;
+        return monitorProcess(socket_name);
     } else {
-        daemon_file += socket_name;
         std::ofstream file(daemon_file);
         file << pid << std::endl;
-        file << db_name << std::endl;
-        file.close();
+        file << socket_name << std::endl;
         return 0;
     }
 }
