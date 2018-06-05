@@ -13,6 +13,11 @@ project(leveldb_daemon)
 include_directories(${leveldb_daemon_SOURCE_DIR}/include)
 
 set(DAEMON_SOURCE_FILES
+        include/Config.h
+        include/util/Util.h
+        include/ipc/Command.h
+        include/ipc/Server.h
+        include/storage/Database.h
         src/leveldb_daemon.cpp
         src/ipc/Server.cpp
         src/ipc/Command.cpp
@@ -32,6 +37,11 @@ project(leveldb_client)
 include_directories(${leveldb_client_SOURCE_DIR}/include)
 
 set(LIB_SOURCE_FILES
+        include/Config.h
+        include/util/Util.h
+        include/ipc/Command.h
+        include/ipc/Client.h
+        include/storage/Database.h
         src/ipc/Client.cpp
         src/ipc/Command.cpp
         include/Serializer.hpp

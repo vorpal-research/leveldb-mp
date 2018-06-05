@@ -25,7 +25,7 @@ public:
 
     class Iterator;
 
-    Database(const std::string &path);
+    explicit Database(const std::string &path);
 
     bool put(const Key &key, Value value);
 
